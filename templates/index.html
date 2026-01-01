@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WILDBOTS Tool</title>
+
+<style>
+body {
+    font-family: Arial;
+    padding: 40px;
+}
+
+.container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.form-box {
+    width: 320px;
+}
+
+.preview-box {
+    flex: 1;
+    margin-top: 6px;
+}
+
+input, select, button {
+    padding: 10px;
+    margin: 6px 0;
+    width: 100%;
+}
+
+button {
+    font-size: 18px;
+    cursor: pointer;
+}
+
+textarea {
+    width: 100%;
+    resize: vertical;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<h2>WILDBOTS Email & PDF Tool</h2>
+
+<form method="post">
+<div class="container">
+
+<!-- LEFT COLUMN -->
+<div class="form-box">
+<form method="post">
+
+    <input id="company" name="company" placeholder="Company Name" required>
+    <input id="users_name" name="users_name" placeholder="Your Name" required>
+
+    <div id="nameFields">
+        <input id="name" name="name" placeholder="Name">
+        <input id="who" name="who" placeholder="Mr / Ms">
+    </div>
+
+    <input id="emailAddress" name="email_address" placeholder="Email Address" required>
+
+    <select id="nameType" name="name_type" onchange="toggleNameFields()">
+        <option value="N">First Name</option>
+        <option value="L">Last Name</option>
+        <option value="C">Company Name</option>
+    </select>
+
+    <select id="title" name="title">
+        <option>Sponsorship Opportunity: Support the WILDBOTS!</option>
+        <option>Seeking Sponsorship for the WILDBOTS!</option>
+        <option>Invest in STEM Education: Support the WILDBOTS!</option>
+        <option>Partner with Us: Sponsorship Request from the WILDBOTS!</option>
+        <option>Funding Request: Support the WILDBOTS in FRC</option>
+    </select>
+
+    <br>
+
+    <!-- JS only -->
+    <button type="button" onclick="generateEmail()">
+        Generate Email
+    </button>
+
+
+
+    <!-- Submits to Flask -->
+    <button formaction="/pdf" formmethod="post">
+        PDF
+    </button>
+
+    <!-- Clearing the info -->
+    <button type="button" onclick="clearAll()">
+        Clear All
+    </button>
+    
+</form>
+</div>
+
+<!-- RIGHT COLUMN -->
+<div class="preview-box">
+    <textarea id="previewEmailAddress"
+              name="preview_email_address"
+              rows="2"
+              placeholder="Email Address"></textarea><br><br>
+
+    <textarea id="previewSubject"
+              name="preview_subject"
+              rows="2"
+              placeholder="Subject"></textarea><br><br>
+
+    <!-- THIS IS WHAT FLASK USES -->
+    <textarea id="previewEmail"
+              name="email"
+              rows="15"
+              placeholder="Email Body"></textarea>
+</div>
+
+</div>
+
+<script>
+function toggleNameFields() {
+    const type = document.getElementById("nameType").value;
+    const fields = document.getElementById("nameFields");
+    fields.classList.toggle("hidden", type === "C");
+}
+
+function clearAll() {
+    // clear inputs
+    document.getElementById("company").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("who").value = "";
+    document.getElementById("emailAddress").value = "";
+
+    // reset selects
+    document.getElementById("nameType").value = "N";
+    document.getElementById("title").selectedIndex = 0;
+
+    // clear preview
+    document.getElementById("previewEmailAddress").value = "";
+    document.getElementById("previewSubject").value = "";
+    document.getElementById("previewEmail").value = "";
+}
+
+function generateEmail() {
+    const company = document.getElementById("company").value;
+    const name = document.getElementById("name").value;
+    const who = document.getElementById("who").value;
+    const type = document.getElementById("nameType").value;
+    const title = document.getElementById("title").value;
+    const emailAddr = document.getElementById("emailAddress").value;
+    const users_name = document.getElementById("users_name").value;
+
+    let header = "";
+    if (type === "N") header = `Hello ${name},`;
+    else if (type === "L") header = `Dear ${who}.${name},`;
+    else header = `Hello ${company},`;
+
+    const body = `${header}
+
+I hope this message finds you well. I'm ${users_name}, a high school student and proud member of Westminster WILDBOTS #6725, and I'm reaching out with great enthusiasm. We're passionate about STEM, robotics, and business, and we believe your support can help us achieve and learn incredible things. The WILDBOTS are a group of students from Westminster S.S. in London, Ontario who thrive on the excitement of the First Robotics Competition (FRC), where we design, build, and compete with robots in a fast-paced, dynamic environment. Through the years we’ve inspired students to pursue their passions in STEM and business and gain valuable experience throughout the build and competition seasons.
+
+We're excited about the potential of a partnership with you. Your sponsorship could empower us to inspire and educate the innovators of tomorrow, making a real impact on our community. Our team would love to have the opportunity to connect and discuss more about our team and sponsorship opportunities. I have attached more information about our team, a letter from our teacher mentors, and information about sponsorship or other opportunities.
+
+Thank you for considering our request, and I look forward to the opportunity to connect and share more about our team with you.
+
+Best regards,
+
+${users_name}
+
+Teacher Mentor Contact: J. Levy, email J.Levy@TVDSB.ca`;
+
+    document.getElementById("previewEmailAddress").value = emailAddr;
+    document.getElementById("previewSubject").value = title;
+    document.getElementById("previewEmail").value = body;
+}
+</script>
+
+</body>
+</html>
