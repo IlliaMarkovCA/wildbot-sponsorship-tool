@@ -171,9 +171,12 @@ def make_pdf():
 
     story.append(Paragraph(Body_Pagraphs4, my_style))
     # jpg or png
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    image_path = os.path.join(BASE_DIR, "static", "PDF_Sponsorship_BACKGROUND_LINE.jpg")
+    
     def background(canvas, doc):
         canvas.drawImage(
-            "G:\Мій диск\P2 Coding\HTML\Images\PDF Sponsorship BACKGROUND+LINE.jpg",
+            image_path,
             x=0,
             y=0,
             width=LETTER[0],
@@ -237,4 +240,5 @@ def make_pdf():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
+
     app.run(host="0.0.0.0", port=port)
